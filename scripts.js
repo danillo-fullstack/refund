@@ -3,6 +3,8 @@ const amount = document.querySelector('#amount');
 const expense = document.querySelector('#expense');
 const category = document.querySelector("#category");
 const itemList = document.querySelector('ul');
+const expensesTotal = document.querySelector('aside header h2');
+const expenseQuantity = document.querySelector('aside header p span');
 
 amount.addEventListener('input', () => {
     let value = amount.value.replace(/\D/g, "");
@@ -69,8 +71,39 @@ function expenseAdd(newExpense) {
          
         expenseItem.append(expenseIcon, expenseInfo, expenseAmount, removeIcon);
         itemList.append(expenseItem);
+        updateTotals();
     } catch (error) {
         alert("Não foi possível atualizar a lista de despesas");
+        console.log(error);
+    }
+}
+
+function updateTotals() {
+    try {
+        const items = itemList.children;
+        expenseQuantity.textContent = `${items.length} ${items.length > 1 ? 'despesas' : 'despesa'}`;
+
+        let total = 0;
+        for (let item = 0; item < items.length; item++) {
+            const itemAmount = items[item].querySelector(".expense-amount");
+            let value = itemAmount.textContent.replace(/[^\d,]/g,"").replace(",", ".");
+            value = parseFloat(value);
+
+            if (isNaN(value)) {
+                return alert ("Não foi pssível calcular o total. O valor não parece ser um número.");
+            }
+            total += Number(value);
+        }
+
+        const symbolBRL = document.createElement('small');
+        symbolBRL.textContent = "R$";
+
+        total = formatCurrencyBRL(total).toUpperCase().replace("R$","");
+        expensesTotal.innerHTML = "";
+        expensesTotal.append(symbolBRL, total);
+        
+    } catch (error) {
+        alert("Não foi possúivel atualizar os totais");
         console.log(error);
     }
 }
