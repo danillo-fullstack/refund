@@ -72,6 +72,7 @@ function expenseAdd(newExpense) {
         expenseItem.append(expenseIcon, expenseInfo, expenseAmount, removeIcon);
         itemList.append(expenseItem);
         updateTotals();
+        clearInputs();
     } catch (error) {
         alert("Não foi possível atualizar a lista de despesas");
         console.log(error);
@@ -90,7 +91,7 @@ function updateTotals() {
             value = parseFloat(value);
 
             if (isNaN(value)) {
-                return alert ("Não foi pssível calcular o total. O valor não parece ser um número.");
+                return alert ("Não foi possível calcular o total. O valor não parece ser um número.");
             }
             total += Number(value);
         }
@@ -103,8 +104,24 @@ function updateTotals() {
         expensesTotal.append(symbolBRL, total);
         
     } catch (error) {
-        alert("Não foi possúivel atualizar os totais");
+        alert("Não foi possível atualizar os totais");
         console.log(error);
     }
 }
 
+itemList.addEventListener('click', (event) => {
+    if (event.target.classList.contains('remove-icon')) {
+        const item = event.target.closest('li');
+        item.remove();
+    }
+    updateTotals();
+    clearInputs();
+});
+
+function clearInputs() {
+    amount.value = "";
+    expense.value = "";
+    category.value = "";
+
+    expense.focus();
+}
